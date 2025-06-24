@@ -84,6 +84,10 @@ edit_by_status() {
 
 alias vibs='edit_by_status'
 alias vids='vimdiff -c "syntax off" {de,en}/src/SUMMARY.md'
+
+# Show infos about defined aliases
+alias vibs
+alias vids
 ```
 
 ### Unlock SSH keys for this project
