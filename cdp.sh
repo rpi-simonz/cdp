@@ -2,19 +2,19 @@
 
 cdp() {
 
-    PROJECTDIR=~/projects
-    PROJECTFILE=~/.projects
+    : "${PROJECTDIR:=~/projects}"
+    : "${PROJECTFILE:=~/.projects}"
 
     case "$1" in
-        -d|-D|-e)  [ ! -d "${PROJECTDIR}" ] && { echo "Directory ${PROJECTDIR} not found." ; return 1 ;}
+        -d|-D|-e)  [[ ! -d "${PROJECTDIR}" ]] && { echo "Directory ${PROJECTDIR} not found." ; return 1 ;}
                    ;;
            -i|-a)  ;;
-               *)  [ ! -s "${PROJECTFILE}" ] && { echo "Project file ${PROJECTFILE} not found or is empty." ; return 1 ;}
+               *)  [[ ! -s "${PROJECTFILE}" ]] && { echo "Project file ${PROJECTFILE} not found or is empty." ; return 1 ;}
                    ;;
     esac
 
     case "$1" in
-        -h) cat <<EOF
+        -h|-\?) cat <<EOF
 
 Present a list of directories ("projects") to cd into.
 If there is a file .cdprc in the target directory, that one is sourced.
@@ -63,42 +63,39 @@ EOF
         -a) echo "$PWD" >> "${PROJECTFILE}"
             return
             ;;
+
         -d) shift
-            set -- $(ls -1 ${PROJECTDIR} | fzf --query="$*" --exact --select-1 --reverse  --no-sort --preview="ls -lG ${PROJECTDIR}/{1}")
+            set -- "$(ls -1 "${PROJECTDIR}" | fzf --query="$*" --exact --select-1 --reverse  --no-sort --preview="ls -lG ${PROJECTDIR}/{1}")"
             [[ -z $1 ]] && return 1
-            cd "${PROJECTDIR}/$1" || return 7
+            cd "${PROJECTDIR}/$1" || return 1
             set --
             ;;
 
         -D) shift
-            set -- $(ls -ltG ${PROJECTDIR} | head -11 | tail -10 | fzf --query="$*" --exact --select-1 --reverse  --no-sort --preview="ls -ltG ${PROJECTDIR}/{8}")
+            set -- "$(ls -ltG "${PROJECTDIR}" | head -11 | tail -10 | fzf --query="$*" --exact --select-1 --reverse  --no-sort --preview="ls -ltG ${PROJECTDIR}/{8}")"
             [[ -z $8 ]] && return 1
-            cd "${PROJECTDIR}/$8" || return 7
+            cd "${PROJECTDIR}/$8" || return 1
             set --
             ;;
 
-         .) shift
-            echo "What's this? Ask the admin! ;-)"
-            ;;
-
         *)
-            set -- $(cat ${PROJECTFILE} | fzf --query="$*" --exact --select-1 --reverse  --no-sort --preview='ls -lA {1}')
-            PDIR=$1
-            [[ -z $PDIR ]] && return 1
+            set -- "$(fzf --query="$*" --exact --select-1 --reverse  --no-sort --preview='ls -lA {1}' < "${PROJECTFILE}")"
+            PDIR="$1"
+            [[ -z "$PDIR" ]] && return 1
             shift
-            [ ! -d "${PDIR}" ] && { echo "Directory ${PDIR} not found." ; return 1 ;}
+            [[ ! -d "${PDIR}" ]] && { echo "Directory ${PDIR} not found." ; return 1 ;}
             if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
                 echo ""
                 echo "Script isn't sourced! So 'cd $PDIR' won't work."
                 echo "Exiting now."
-                return 9
+                return 1
             else
-                cd "$PDIR" || return 7
+                cd "$PDIR" || return 1
             fi
             ;;
     esac
 
-    if [ -f .cdprc ] ; then
+    if [[ -f .cdprc ]] ; then
         echo ""
         echo "***************************************"
         echo "* Automatic init file '.cdprc' found: *"
@@ -110,24 +107,25 @@ EOF
                 y|Y|j|J) source .cdprc
                          break
                          ;;
-                   v|Yv) less .cdprc
+                   v|Yv) # Note: Yv is intentional here! Just for convenience.
+                         less .cdprc
                          ;;
-                      *) echo "...ignored..."
+                      *) echo ".cdprc has NOT been sourced!"
                          break
                          ;;
             esac
         done
     fi
 
-    if [ -d .hg ] ; then
+    if [[ -d .hg ]] ; then
         echo -e "\n========== hg =================================================="
-        #hg heads
+        #hg heads  # not sure yet if this remains commented out, gets activated or deleted
         echo -e "\n---------- hg sum\n"
         hg sum
         echo -e "\n================================================================\n"
     fi
 
-    if [ -d .git ] ; then
+    if [[ -d .git ]] ; then
         echo -e "\n========== git ================================================="
         echo -e "\n---------- git remote -v\n"
         git remote -v
@@ -152,7 +150,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "////////////////////////////////////////////////////////////////////"
 
     if ! command -pv fzf >/dev/null; then
-        echo "The program 'fzf' (Fuzzy Finder) is required. Please install it."
+        echo "The program 'fzf' (Fuzzy Finder) is required."
+        echo "Please install it, usually using your distros package management."
         exit 8
     fi
 
