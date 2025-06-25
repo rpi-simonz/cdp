@@ -2,21 +2,19 @@
 
 cdp() {
 
-    : "${PROJECTDIR:=~/projects}"
-    : "${PROJECTFILE:=~/.projects}"
+    PROJECTDIR=${PROJECTDIR:=~/projects}
+    PROJECTFILE=${PROJECTFILE:=~/.projects}
 
     case "$1" in
-        -d|-D|-e)  [[ ! -d "${PROJECTDIR}" ]] && { echo "Directory ${PROJECTDIR} not found." ; return 1 ;}
-                   ;;
-           -i|-a)  ;;
-               *)  [[ ! -s "${PROJECTFILE}" ]] && { echo "Project file ${PROJECTFILE} not found or is empty." ; return 1 ;}
-                   ;;
+     -a|-e|-i)  ;;
+        -d|-D)  [[ ! -d "${PROJECTDIR}" ]] && { echo -e "\nError: Directory ${PROJECTDIR} not found." ; return 1 ;} ;;
+            *)  [[ ! -s "${PROJECTFILE}" ]] && { echo -e "\nError: Project file ${PROJECTFILE} not found or is empty.\n"; set -- "-h";} ;;
     esac
 
     case "$1" in
         -h|-\?) cat <<EOF
 
-Present a list of directories ("projects") to cd into.
+Present a list of directories ("projects") to 'cd' into, using a powerful TUI.
 If there is a file .cdprc in the target directory, that one is sourced.
 It's like an autostart feature for this directory/project.
 
@@ -54,12 +52,19 @@ EOF
         -e) $VISUAL "${PROJECTFILE}"
             return
             ;;
+
         -r) $VISUAL .cdprc
             return
             ;;
-        -i) sed -i "1s|^|${PWD}\n|" "${PROJECTFILE}"
+
+        -i) if [[ -s "${PROJECTFILE}" ]] ; then
+                sed -i "1s|^|${PWD}\n|" "${PROJECTFILE}"
+            else
+                echo "${PWD}" > "${PROJECTFILE}"
+            fi
             return
             ;;
+
         -a) echo "$PWD" >> "${PROJECTFILE}"
             return
             ;;
@@ -79,14 +84,14 @@ EOF
             ;;
 
         *)
-            set -- "$(fzf --query="$*" --exact --select-1 --reverse  --no-sort --preview='ls -lA {1}' < "${PROJECTFILE}")"
+            set -- "$(grep -v '^\s*$' "${PROJECTFILE}" | fzf --query="$*" --exact --select-1 --reverse --no-sort --preview='ls -lA {1}')"
             PDIR="$1"
             [[ -z "$PDIR" ]] && return 1
             shift
             [[ ! -d "${PDIR}" ]] && { echo "Directory ${PDIR} not found." ; return 1 ;}
             if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
                 echo ""
-                echo "Script isn't sourced! So 'cd $PDIR' won't work."
+                echo "Script isn't sourced! So 'cd $PDIR' won't work as expected."
                 echo "Exiting now."
                 return 1
             else
