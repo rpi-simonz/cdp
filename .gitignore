@@ -1,3 +1,6 @@
+# Ignore private settings
+.private-conf.sh
+
 # Ignore vim editor files
 Session.vim
 **/*.swp
