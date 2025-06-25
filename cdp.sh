@@ -18,32 +18,44 @@ Present a list of directories ("projects") to 'cd' into, using a powerful TUI.
 If there is a file .cdprc in the target directory, that one is sourced.
 It's like an autostart feature for this directory/project.
 
+The name *cdp* comes from "CD Project".
+
 The list of presented directories can be:
 
-  - the contents of the maintained file '${PROJECTFILE}'
-  - the alphabetically sorted directories in '${PROJECTDIR}/'
-  - the 10 most recently used directories in '${PROJECTDIR}/'
+  - the contents of the maintained projects file '\$PROJECTFILE'
+  - the alphabetically sorted directories in '\$PROJECTDIR'
+  - the 10 most recently used directories in '\$PROJECTDIR'
+
+
+Configuration:
+
+There are two environment variables used. They can be set externally.
+If not set externally they are set in the script to the following defaults:
+
+    PROJECTDIR=~/projects
+    PROJECTFILE=~/.projects
 
 
 Usage:
 
   cdp [option] [filter string]
 
-Without any parameters the complete list of saved directories is presented to choose from.
-The optional filter string reduces that list to the matching entries. (fzf is used for this.)
+Without any parameters the complete list of saved directories is presented to
+choose from. The optional filter string reduces that list to the matching
+entries. (fzf is used for this.)
 
 Options affecting the list of presented directories:
 
-    -d  present sorted directories in '${PROJECTDIR}/' to choose from
-    -D  present the 10 MRU directories in '${PROJECTDIR}/' to choose from
+    -d  present sorted directories in '\$PROJECTDIR' to choose from
+    -D  present the 10 MRU directories in '$\PROJECTDIR' to choose from
 
 The following options are for administrative purposes:
 
-    -e  edit '${PROJECTFILE}'
-    -i  insert current directory at '${PROJECTFILE}'s beginning
-    -a  append current directory to '${PROJECTFILE}'
-    -r  edit rc file .cdprc in the current project directory
-    -h  this help text
+    -e        edit '\$PROJECTFILE'
+    -i [dir]  insert given or current directory at '\$PROJECTFILE's beginning
+    -a [dir]  append given or current directory to '\$PROJECTFILE'
+    -r        edit rc file .cdprc in the current project directory
+    -h        this help text
 
 EOF
             return
@@ -57,15 +69,17 @@ EOF
             return
             ;;
 
-        -i) if [[ -s "${PROJECTFILE}" ]] ; then
-                sed -i "1s|^|${PWD}\n|" "${PROJECTFILE}"
+        -i) shift
+            if [[ -s "${PROJECTFILE}" ]] ; then
+                sed -i "1s|^|${1:-$PWD}\n|" "${PROJECTFILE}"
             else
-                echo "${PWD}" > "${PROJECTFILE}"
+                echo "${1:-$PWD}" > "${PROJECTFILE}"
             fi
             return
             ;;
 
-        -a) echo "$PWD" >> "${PROJECTFILE}"
+        -a) shift
+            echo "${1:-$PWD}" >> "${PROJECTFILE}"
             return
             ;;
 
