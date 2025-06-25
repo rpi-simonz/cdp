@@ -11,7 +11,8 @@ The list of presented directories can be:
   - the alphabetically sorted directories in '${PROJECTDIR}/'
   - the 10 most recently used directories in '${PROJECTDIR}/'
 
-The above variables are set in the script, the defaults are:
+The above environment variables can be set externally.  
+If not set externally they are set in the script to the following defaults:
 
     PROJECTDIR=~/projects
     PROJECTFILE=~/.projects
@@ -38,11 +39,11 @@ Options affecting the list of presented directories:
 
 The following options are for administrative purposes:
 
-    -e  edit '${PROJECTFILE}'
-    -i  insert current directory at '${PROJECTFILE}'s beginning
-    -a  append current directory to '${PROJECTFILE}'
-    -r  edit rc file .cdprc in the current project directory
-    -h  this help text
+    -e        edit '$PROJECTFILE'
+    -i [dir]  insert given or current directory at '$PROJECTFILE's beginning
+    -a [dir]  append given or current directory to '$PROJECTFILE'
+    -r        edit rc file .cdprc in the current project directory
+    -h        this help text
 
 
 ## Installation
