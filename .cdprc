@@ -1,7 +1,23 @@
 #!/usr/bin/env bash
 # vim: set expandtab:
 
-source .private-conf.sh
+check_ssh_id() {
+    IDFILE="$1"
+    [ -f "$IDFILE" ] || return 1
+    echo "$2"
+    if ! ssh-add -T "$IDFILE" 2>/dev/null
+    then
+        ssh-add "$IDFILE"
+    fi
+    ssh-add -T "$IDFILE"
+}
+
+echo "*** Check/unlock SSH keys (and set possibly more private settings):"
+echo ""
+
+# Examples, can/should be set to real values in .private-conf.sh
+#check_ssh_id  ~/.ssh/id_my_github    "Checking ssh key(s) for GitHub ..."
+[[ -f .private-conf.sh ]] && source .private-conf.sh
 
 cat <<EOF
 
