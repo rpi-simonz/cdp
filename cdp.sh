@@ -65,6 +65,8 @@ The following options are for administrative purposes:
     -r        edit rc file .cdprc in the current project directory
     -h        this help text
 
+    --init    create example .cdprc and .private-conf.sh in the current directory
+
 EOF
             return
             ;;
@@ -109,6 +111,74 @@ EOF
             # and proceed to the next step checking for .cdprc etc.
             shift ;;
 
+         --init) if [[ -f .cdprc ]] ; then
+                     echo "File .cdprc is already existing!"
+                 else
+                     echo "Creating an example .cdprc file in the current directory now."
+                     cat <<EOF-CDPRC > .cdprc
+#!/usr/bin/env bash
+
+check_ssh_id() {
+    IDFILE="$1"
+    [ -f "$IDFILE" ] || return 1
+    echo "$2"
+    if ! ssh-add -T "$IDFILE" 2>/dev/null
+    then
+        ssh-add "$IDFILE"
+    fi
+    ssh-add -T "$IDFILE"
+}
+
+echo "*** Check/unlock SSH keys (and set possibly more private settings):"
+echo ""
+
+# Example:
+#     check_ssh_id  ~/.ssh/id_my_github    "Checking ssh key(s) for GitHub ..."
+#
+# But can/should be set to real values in .private-conf.sh for privacy reasons
+# especially if this .cdprc file is tracked by git!
+# Then .private-conf.sh can be easily set to be "ignored" in .gitignore.
+[[ -f .private-conf.sh ]] && source .private-conf.sh
+
+cat <<EOF
+
+
+*******************************************************************************
+
+This project directory contains ...
+
+The directory is tracked by git and is connected to the git repo listed below.
+
+*******************************************************************************
+
+
+EOF
+
+EOF-CDPRC
+                 fi
+
+                 if [[ -f .private-conf.sh ]] ; then
+                     echo "File .private-conf.sh is already existing!"
+                 else
+                     echo "Creating an example .private-conf.sh file in the current directory now."
+                     cat <<EOF-PRIVATE-CONF > .private-conf.sh
+#!/usr/bin/env bash
+
+#echo "Setting user data for git ..."
+#git config user.name myname
+#git config user.email my-emaol-address
+
+git config --get user.name
+git config --get user.email
+
+echo ""
+
+#check_ssh_id ~/.ssh/the_needed_id   "Checking ssh key(s) for GitHub ..."
+EOF-PRIVATE-CONF
+                 fi
+                 return
+                 ;;
+
          *)
             set -- "$(grep -v '^\s*$' "${PROJECTFILE}" | fzf --query="$*" --exact --select-1 --reverse --no-sort --preview='ls -lA {1}')"
             PDIR="$1"
@@ -133,13 +203,14 @@ EOF
         echo "***************************************"
         echo ""
         while true ; do
-            read -r -e -p "Should it be sourced now or viewed before [Y|n|v]? " -i "Y" inp
+            read -r -p "Should it be sourced now or viewed before [Y|n|v]? " inp
+            inp="${inp:-Y}"
             case "$inp" in
-                y|Y|j|J) source .cdprc
+                y|Y|j|J) echo ""
+                         source .cdprc
                          break
                          ;;
-                   v|Yv) # Note: Yv is intentional here! Just for convenience.
-                         less .cdprc
+                      v) less .cdprc
                          ;;
                       *) echo ".cdprc has NOT been sourced!"
                          break
