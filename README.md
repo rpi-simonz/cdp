@@ -25,12 +25,19 @@ Examples for `.cdprc` files see below.
 
 ## Usage
 
-```
-cdp [option] [filter string]
-```
+    cdp [filter string]
+    cdp [option] [dir]
 
-Without any parameters the complete list of saved directories is presented to choose from.
-The optional filter string reduces that list to the matching entries. (*fzf* is used for this.)
+Without any parameters the complete list of saved directories is presented to
+choose from. The optional filter string reduces that list to the matching
+entries. (fzf is used for this.)
+
+If the given filter string is "." (just a dot) no directory selection is
+performed at all, the current directory is kept and any followup actions
+are done, e.g. the .cdprc is searched for and optionally sourced.
+
+
+Options:
 
 Options affecting the list of presented directories:
 
@@ -110,8 +117,15 @@ check_ssh_id() {
 echo "*** Check/unlock SSH keys (and set possibly more private settings):"
 echo ""
 
-check_ssh_id  ~/.ssh/id_my_github    "Checking ssh key(s) for GitHub ..."
-check_ssh_id  ~/.ssh/id_my_bitbucket "Checking ssh key(s) for Bitbucket..."
+# Examples:
+#    check_ssh_id  ~/.ssh/id_my_github    "Checking ssh key(s) for GitHub ..."
+#    check_ssh_id  ~/.ssh/id_my_bitbucket "Checking ssh key(s) for Bitbucket..."
+#
+# But can/should be set to real values in .private-conf.sh for privacy reasons
+# especially if this .cdprc file is tracked by git!
+# Then .private-conf.sh can be easily set to be "ignored" in .gitignore.
+[[ -f .private-conf.sh ]] && source .private-conf.sh
+
 ```
 
 ### Just print some infos when entering the directory

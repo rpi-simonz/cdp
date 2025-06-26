@@ -38,11 +38,19 @@ If not set externally they are set in the script to the following defaults:
 
 Usage:
 
-  cdp [option] [filter string]
+    cdp [filter string]
+    cdp [option] [dir]
 
 Without any parameters the complete list of saved directories is presented to
 choose from. The optional filter string reduces that list to the matching
 entries. (fzf is used for this.)
+
+If the given filter string is "." (just a dot) no directory selection is
+performed at all, the current directory is kept and any followup actions
+are done, e.g. the .cdprc is searched for and optionally sourced.
+
+
+Options:
 
 Options affecting the list of presented directories:
 
@@ -97,7 +105,11 @@ EOF
             set --
             ;;
 
-        *)
+         .) # No directory selection at all, just stay in the current directory
+            # and proceed to the next step checking for .cdprc etc.
+            shift ;;
+
+         *)
             set -- "$(grep -v '^\s*$' "${PROJECTFILE}" | fzf --query="$*" --exact --select-1 --reverse --no-sort --preview='ls -lA {1}')"
             PDIR="$1"
             [[ -z "$PDIR" ]] && return 1

@@ -15,8 +15,12 @@ check_ssh_id() {
 echo "*** Check/unlock SSH keys (and set possibly more private settings):"
 echo ""
 
-# Examples, can/should be set to real values in .private-conf.sh
-#check_ssh_id  ~/.ssh/id_my_github    "Checking ssh key(s) for GitHub ..."
+# Example:
+#     check_ssh_id  ~/.ssh/id_my_github    "Checking ssh key(s) for GitHub ..."
+#
+# But can/should be set to real values in .private-conf.sh for privacy reasons
+# especially if this .cdprc file is tracked by git!
+# Then .private-conf.sh can be easily set to be "ignored" in .gitignore.
 [[ -f .private-conf.sh ]] && source .private-conf.sh
 
 cat <<EOF
@@ -24,7 +28,7 @@ cat <<EOF
 
 *******************************************************************************
 
-This project directory holds the development of 'cdp'.
+This project directory contains the development of 'cdp'.
 
 The directory is tracked by git and is connected to the git repo listed below.
 
