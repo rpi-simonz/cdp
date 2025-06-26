@@ -166,7 +166,7 @@ EOF-CDPRC
 
 #echo "Setting user data for git ..."
 #git config user.name myname
-#git config user.email my-emaol-address
+#git config user.email my-email-address
 
 git config --get user.name
 git config --get user.email
@@ -191,6 +191,7 @@ EOF-PRIVATE-CONF
                 echo "Exiting now."
                 return 1
             else
+                echo "cd $PDIR"
                 cd "$PDIR" || return 1
             fi
             ;;
