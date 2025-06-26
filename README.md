@@ -19,8 +19,10 @@ If not set externally they are set in the script to the following defaults:
     PROJECTDIR=~/projects
     PROJECTFILE=~/.projects
 
+## Autostart per project
+
 If there is a file `.cdprc` in the target directory, that one is sourced.  
-It's like an autostart feature for this directory/project.
+It's like an "autostart" feature for this directory/project.
 
 Examples for `.cdprc` files see below.
 
