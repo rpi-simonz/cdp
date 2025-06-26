@@ -52,6 +52,8 @@ The following options are for administrative purposes:
     -r        edit rc file .cdprc in the current project directory
     -h        this help text
 
+    --init    create example .cdprc and .private-conf.sh in the current directory
+
 
 ## Installation
 
