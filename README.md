@@ -1,9 +1,9 @@
 # cdp - A TUI directory/project changer with optional autostart script
 
-This is a little *bash* function providing a helper tool for easily `cd`ing
+This is a small *bash* function providing a helper tool for easily `cd`ing
 into a target directory, selectable from a list presented by a powerful TUI.
 
-Its name *cdp* comes from "CD Project".
+Its name *cdp* is a shortcut of *cd project".
 
 The list of presented directories can be:
 
