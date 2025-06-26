@@ -5,9 +5,13 @@ check_ssh_id() {
     IDFILE="$1"
     [ -f "$IDFILE" ] || return 1
     echo "$2"
-    if ! ssh-add -T "$IDFILE" 2>/dev/null
-    then
+    if ! ssh-add -T "$IDFILE" 2>/dev/null ; then
         ssh-add "$IDFILE"
+        if [[ $? == 2 ]] ; then
+            echo "Connectig to ssh-agent here and try again..."
+            eval "$(ssh-agent)"
+            ssh-add "$IDFILE"
+        fi
     fi
     ssh-add -T "$IDFILE"
 }
