@@ -94,14 +94,14 @@ EOF
             ;;
 
         -d) shift
-            set -- "$(ls -1 "${PROJECTDIR}" | fzf --query="$*" --exact --select-1 --reverse  --no-sort --preview="ls -lG ${PROJECTDIR}/{1}")"
+            set -- "$(ls -1 "${PROJECTDIR}" | fzf --query="$*" --exact --select-1 --reverse  --no-sort --header=">> Select from the project directories <<" --preview="ls -lG ${PROJECTDIR}/{1}")"
             [[ -z $1 ]] && return 1
             cd "${PROJECTDIR}/$1" || return 1
             set --
             ;;
 
         -D) shift
-            set -- "$(ls -ltG "${PROJECTDIR}" | head -11 | tail -10 | fzf --query="$*" --exact --select-1 --reverse  --no-sort --preview="ls -ltG ${PROJECTDIR}/{8}")"
+            set -- "$(ls -ot --time-style=long-iso "${PROJECTDIR}" | awk '{print $5, $6, $7, $8, $9}' | head -11 | tail -10 | fzf --query="$*" --exact --select-1 --reverse --no-sort --header=">> Select from the 10 MRU project directories <<" --preview="ls -ot ${PROJECTDIR}/{3}")"
             [[ -z $8 ]] && return 1
             cd "${PROJECTDIR}/$8" || return 1
             set --
