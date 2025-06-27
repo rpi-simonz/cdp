@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# vim: set expandtab:
 
 cdp() {
 
@@ -94,18 +95,16 @@ EOF
             ;;
 
         -d) shift
-            set -- "$(ls -1 "${PROJECTDIR}" | fzf --query="$*" --exact --select-1 --reverse  --no-sort --header=">> Select from the project directories <<" --preview="ls -lG ${PROJECTDIR}/{1}")"
-            [[ -z $1 ]] && return 1
-            cd "${PROJECTDIR}/$1" || return 1
-            set --
+            PDIR=$(find "${PROJECTDIR}" -maxdepth 1 | fzf --query="$*" --exact --select-1 --reverse  --no-sort --header=">> Select from the project directories <<" --preview="ls -lA {s1..}")
+            [[ -z "$PDIR" ]] && return 1
+            cd "$PDIR" || return 1
             ;;
 
         -D) shift
-            # shellcheck disable=2046 # (Quoting)
-            set -- $(ls -ot --time-style=long-iso "${PROJECTDIR}" | awk '{print $5, $6, $7, $8, $9}' | head -11 | tail -10 | fzf --query="$*" --exact --select-1 --reverse --no-sort --header=">> Select from the 10 MRU project directories <<" --preview="ls -ot ${PROJECTDIR}/{3}")
-            [[ -z $3 ]] && return 1
-            cd "${PROJECTDIR}/$3" || return 1
-            set --
+            RESULT=$(find "${PROJECTDIR}" -maxdepth 1 -printf '%CF %CH:%CM %P\n' | grep -v "^[^ ][^ ]* [^ ][^ ]* $" | sort -r | head -10 | fzf --query="$*" --exact --select-1 --reverse --no-sort --header=">> Select from the 10 MRU project directories <<" --preview="ls -lA ${PROJECTDIR}/{s3..}")
+            PDIR=$(echo "$RESULT" | cut -d " " -f3-)
+            [[ -z $PDIR ]] && return 1
+            cd "${PROJECTDIR}/$PDIR" || return 1
             ;;
 
          .) # No directory selection at all, just stay in the current directory
@@ -116,6 +115,7 @@ EOF
                      echo "File .cdprc is already existing!"
                  else
                      echo "Creating an example .cdprc file in the current directory now."
+                     # shellcheck disable=2320
                      cat <<EOF-CDPRC > .cdprc
 #!/usr/bin/env bash
 
@@ -185,8 +185,7 @@ EOF-PRIVATE-CONF
                  ;;
 
          *)
-            set -- "$(grep -v '^\s*$' "${PROJECTFILE}" | fzf --query="$*" --exact --select-1 --reverse --no-sort --preview='ls -lA {1}')"
-            PDIR="$1"
+            PDIR=$(grep -v '^\s*$' "${PROJECTFILE}" | fzf --query="$*" --exact --select-1 --reverse --no-sort --preview='ls -lA {s1..}')
             [[ -z "$PDIR" ]] && return 1
             shift
             [[ ! -d "${PDIR}" ]] && { echo "Directory ${PDIR} not found." ; return 1 ;}
