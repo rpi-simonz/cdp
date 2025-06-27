@@ -11,7 +11,7 @@ The list of presented directories can be:
   - the alphabetically sorted directories in '${PROJECTDIR}/'
   - the 10 most recently used directories in '${PROJECTDIR}/'
 
-![Screenshot of cdp in action](cdp.png "Screenshot of cdp in action")
+![Screenshot of cdp in action](screenshot.png "Screenshot of cdp in action")
 
 The above environment variables can be set externally.  
 If not set externally they are set in the script to the following defaults:
