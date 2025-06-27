@@ -3,7 +3,7 @@
 This is a small *bash* function providing a helper tool for easily `cd`ing
 into a target directory, selectable from a list presented by a powerful TUI.
 
-Its name *cdp* is a shortcut of *cd project".
+Its name *cdp* is a shortcut of *"cd project"*.
 
 The list of presented directories can be:
 
