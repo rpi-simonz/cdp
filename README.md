@@ -34,7 +34,7 @@ Examples for `.cdprc` files see below.
 
 Without any parameters the complete list of saved directories is presented to
 choose from. The optional filter string reduces that list to the matching
-entries. (fzf is used for this.)
+entries. (*fzf* is used for this.)
 
 If the given filter string is "." (just a dot) no directory selection is
 performed at all, the current directory is kept and any followup actions
@@ -68,6 +68,10 @@ Recommended: Source it in your `~/.bashrc`.
 
 The program *fzf* (Fuzzy Finder, [see GitHub](https://github.com/junegunn/fzf)) is required.
 Please install it. It should be available in almost every Linux Distribution.
+
+Additionally *ripgrep* (rg) and *fdfind* (fd) are recommended
+because they might be required in related scripts.
+(And are useful for themselves too.)
 
 
 ## Example .cdprc files
@@ -103,6 +107,9 @@ alias vids='vimdiff -c "syntax off" {de,en}/src/SUMMARY.md'
 alias vibs
 alias vids
 ```
+
+For a real world example see project [raspiBackupDoc here at GitHub](https://github.com/framps/raspiBackupDoc).
+
 
 ### Unlock SSH keys for this project
 
