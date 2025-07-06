@@ -134,16 +134,18 @@ check_ssh_id() {
     ssh-add -T "$IDFILE"
 }
 
-echo "*** Check/unlock SSH keys (and set possibly more private settings):"
-echo ""
+if [[ -f .private-conf.sh ]] ; then
 
-# Example:
-#     check_ssh_id  ~/.ssh/id_my_github    "Checking ssh key(s) for GitHub ..."
-#
-# But can/should be set to real values in .private-conf.sh for privacy reasons
-# especially if this .cdprc file is tracked by git!
-# Then .private-conf.sh can be easily set to be "ignored" in .gitignore.
-[[ -f .private-conf.sh ]] && source .private-conf.sh
+    source .private-conf.sh
+
+    # Example contents of .private-conf.sh:
+    #
+    #     check_ssh_id  ~/.ssh/id_my_github    "Checking ssh key(s) for GitHub ..."
+    #
+    # Then .private-conf.sh should be set to be "ignored" in .gitignore.
+
+fi
+
 
 cat <<EOF
 
