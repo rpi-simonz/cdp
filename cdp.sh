@@ -201,6 +201,27 @@ EOF-PRIVATE-CONF
             ;;
     esac
 
+    if [[ -d .hg ]] ; then
+        echo -e "\n========== hg ================================================================="
+        #hg heads  # not sure yet if this remains commented out, gets activated or deleted
+        echo -e "\n----------  hg sum  -----------------------------\n"
+        hg sum
+        echo -e "\n===============================================================================\n"
+    fi
+
+    if [[ -d .git ]] ; then
+        echo -e "\n========== git ================================================================"
+        echo -e "\n----------  git remote -v  ----------------------\n"
+        git remote -v
+        echo -e "\n----------  git show --no-patch  ----------------\n"
+        git show --no-patch
+        echo -e "\n----------  git fetch -v ; git status  ----------\n"
+        git fetch -v
+        echo ""
+        git status
+        echo -e "\n===============================================================================\n"
+    fi
+
     if [[ -f .cdprc ]] ; then
         echo ""
         echo "***************************************"
@@ -222,27 +243,6 @@ EOF-PRIVATE-CONF
                          ;;
             esac
         done
-    fi
-
-    if [[ -d .hg ]] ; then
-        echo -e "\n========== hg =================================================="
-        #hg heads  # not sure yet if this remains commented out, gets activated or deleted
-        echo -e "\n---------- hg sum\n"
-        hg sum
-        echo -e "\n================================================================\n"
-    fi
-
-    if [[ -d .git ]] ; then
-        echo -e "\n========== git ================================================="
-        echo -e "\n---------- git remote -v\n"
-        git remote -v
-        echo -e "\n---------- git show --no-patch\n"
-        git show --no-patch
-        echo -e "\n---------- git fetch -v ; git status\n"
-        git fetch -v
-        echo ""
-        git status
-        echo -e "\n================================================================\n"
     fi
 
     return 0
