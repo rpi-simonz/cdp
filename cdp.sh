@@ -61,6 +61,7 @@ Options affecting the list of presented directories:
 The following options are for administrative purposes:
 
     -e        edit '\$PROJECTFILE'
+    -c [dir]  cd into '$\PROJECTDIR', create new directory there and cd into it
     -i [dir]  insert given or current directory at '\$PROJECTFILE's beginning
     -a [dir]  append given or current directory to '\$PROJECTFILE'
     -r        edit rc file .cdprc in the current project directory
@@ -77,6 +78,15 @@ EOF
             ;;
 
         -r) $VISUAL .cdprc
+            return
+            ;;
+
+        -c) shift
+            cd "${PROJECTDIR}" || return 1
+            if [[ -n "$1" ]] ; then
+                mkdir -p "$1"
+                cd "$1" || return 1
+            fi
             return
             ;;
 
