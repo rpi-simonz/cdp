@@ -105,7 +105,7 @@ EOF
             ;;
 
         -d) shift
-            PDIR=$(find "${PROJECTDIR}" -maxdepth 1 | fzf --query="$*" --exact --select-1 --reverse  --no-sort --header=">> Select from the project directories <<" --preview="ls -lA {s1..}")
+            PDIR=$(find "${PROJECTDIR}" -maxdepth 1 | sort | fzf --query="$*" --exact --select-1 --reverse  --no-sort --header=">> Select from the project directories <<" --preview="ls -lA {s1..}")
             [[ -z "$PDIR" ]] && return 1
             cd "$PDIR" || return 1
             ;;
