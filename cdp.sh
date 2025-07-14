@@ -5,6 +5,7 @@ cdp() {
 
     PROJECTDIR=${PROJECTDIR:=~/projects}
     PROJECTFILE=${PROJECTFILE:=~/.projects}
+    export PROJECTFILE
 
     case "$1" in
      -a|-e|-i)  ;;
@@ -197,7 +198,7 @@ EOF-PRIVATE-CONF
                  ;;
 
          *)
-            PDIR=$(grep -v '^\s*$' "${PROJECTFILE}" | fzf --query="$*" --exact --select-1 --reverse --no-sort --preview='ls -lA {s1..}')
+            PDIR=$(grep -v '^\s*$' "${PROJECTFILE}" | fzf --query="$*" --exact --select-1 --reverse --no-sort --bind='ctrl-e:execute(${VISUAL} ${PROJECTFILE})+reload(grep -v "^\\s*$" "${PROJECTFILE}")' --preview='ls -lA {s1..}')
             [[ -z "$PDIR" ]] && return 1
             shift
             [[ ! -d "${PDIR}" ]] && { echo "Directory ${PDIR} not found." ; return 1 ;}
