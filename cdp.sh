@@ -248,8 +248,8 @@ EOF-PRIVATE-CONF
         git show --no-patch
         echo -e "\n----------  git fetch -v  -----------------------\n"
         git fetch -v
-        echo -e "\n----------  git status  -------------------------\n"
-        git status
+        echo -e "\n----------  git status -sb  ---------------------\n"
+        git status -sb
         echo -e "\n===============================================================================\n"
     fi
 
