@@ -201,9 +201,10 @@ EOF-PRIVATE-CONF
             # shellcheck disable=2016 # Expressions don't expand in single quotes...
             PDIR=$(grep -v '^\s*$' "${PROJECTFILE}" \
                     | fzf --query="$*" --exact --select-1 --reverse --no-sort \
+                          --bind='ctrl-r:reload(grep -v "^\\s*$" "${PROJECTFILE}")+first' \
                           --bind='ctrl-e:execute(${VISUAL} ${PROJECTFILE})+reload(grep -v "^\\s*$" "${PROJECTFILE}")' \
-                          --bind='right:clear-query+reload(echo "{r}" ; fd --hidden --max-depth 1 --type=d --absolute-path --full-path . {})' \
-                          --bind='left:reload(echo $(dirname {}) ; fd --hidden --max-depth 1 --type=d --absolute-path --full-path . $(dirname {}))' \
+                          --bind='right:clear-query+reload(echo "{r}" ; fd --hidden --max-depth 1 --type=d --absolute-path --full-path . {})+first' \
+                          --bind='left:reload(echo $(dirname {}) ; fd --hidden --max-depth 1 --type=d --absolute-path --full-path . $(dirname {}))+first' \
                           --preview='ls -lA {}')
             [[ -z "$PDIR" ]] && return 1
             shift
