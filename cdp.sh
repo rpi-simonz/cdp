@@ -7,6 +7,8 @@ cdp() {
     PROJECTFILE=${PROJECTFILE:=~/.projects}
     export PROJECTFILE
 
+    FZF="fzf --reverse --exact --no-sort --select-1"
+
     case "$1" in
      -a|-e|-i)  ;;
         -d|-D)  [[ ! -d "${PROJECTDIR}" ]] && { echo -e "\nError: Directory ${PROJECTDIR} not found." ; return 1 ;} ;;
@@ -106,14 +108,23 @@ EOF
             ;;
 
         -d) shift
-            PDIR=$(find "${PROJECTDIR}" -maxdepth 1 | sort | fzf --query="$*" --exact --select-1 --reverse  --no-sort --header=">> Select from the project directories <<" --preview="ls -lA {s1..}")
+            # shellcheck disable=2016
+            PDIR=$(find "${PROJECTDIR}" -maxdepth 1 | sort | ${FZF} --query="$*" \
+                          --bind='right:clear-query+reload(echo "{r}" ; fd --hidden --max-depth 1 --type=d --absolute-path --full-path . {})+first' \
+                          --bind='left:reload(echo $(dirname {}) ; fd --hidden --max-depth 1 --type=d --absolute-path --full-path . $(dirname {}))+first' \
+                          --header=">> Select from the project directories <<" \
+                          --preview="ls -lA {s1..}")
             [[ -z "$PDIR" ]] && return 1
             cd "$PDIR" || return 1
             ;;
 
         -D) shift
-            RESULT=$(find "${PROJECTDIR}" -maxdepth 1 -printf '%CF %CH:%CM %P\n' | grep -v "^[^ ][^ ]* [^ ][^ ]* $" | sort -r | head -10 | fzf --query="$*" --exact --select-1 --reverse --no-sort --header=">> Select from the 10 MRU project directories <<" --preview="ls -lA ${PROJECTDIR}/{s3..}")
-            PDIR=$(echo "$RESULT" | cut -d " " -f3-)
+            RESULT=$(find "${PROJECTDIR}" -maxdepth 1 -printf '%CF %CH:%CM  %P\n' \
+                       | grep -v "^[^ ][^ ]* [^ ][^ ]*  $" | sort -r | head -10 \
+                       | ${FZF} --query="$*" \
+                          --header=">> Select from the 10 MRU project directories <<" \
+                          --preview="ls -lA ${PROJECTDIR}/{s3..}")
+            PDIR=${RESULT#*  }
             [[ -z $PDIR ]] && return 1
             cd "${PROJECTDIR}/$PDIR" || return 1
             ;;
@@ -200,7 +211,7 @@ EOF-PRIVATE-CONF
          *)
             # shellcheck disable=2016 # Expressions don't expand in single quotes...
             PDIR=$(grep -v '^\s*$' "${PROJECTFILE}" \
-                    | fzf --query="$*" --exact --select-1 --reverse --no-sort \
+                    | ${FZF} --query="$*" \
                           --bind='ctrl-r:reload(grep -v "^\\s*$" "${PROJECTFILE}")+first' \
                           --bind='ctrl-e:execute(${VISUAL} ${PROJECTFILE})+reload(grep -v "^\\s*$" "${PROJECTFILE}")' \
                           --bind='right:clear-query+reload(echo "{r}" ; fd --hidden --max-depth 1 --type=d --absolute-path --full-path . {})+first' \

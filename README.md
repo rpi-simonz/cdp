@@ -40,11 +40,13 @@ If the given filter string is "." (just a dot) no directory selection is
 performed at all, the current directory is kept and any followup actions
 are done, e.g. the .cdprc is searched for and optionally sourced.
 
-Within the main screen (called without options) there are additional features:
+There are additional features when called without options:
 
   - `Ctrl-E` to open the project file for editing and reload it afterwards
   - `Ctrl-R` to reload the projectfile
   - `left`/`right` to navigate the directory tree
+
+The `left`/`right` navigation is also available when called with `-d`.
 
 
 Options:
