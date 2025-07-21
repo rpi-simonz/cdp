@@ -198,7 +198,13 @@ EOF-PRIVATE-CONF
                  ;;
 
          *)
-            PDIR=$(grep -v '^\s*$' "${PROJECTFILE}" | fzf --query="$*" --exact --select-1 --reverse --no-sort --bind='ctrl-e:execute(${VISUAL} ${PROJECTFILE})+reload(grep -v "^\\s*$" "${PROJECTFILE}")' --preview='ls -lA {s1..}')
+            # shellcheck disable=2016 # Expressions don't expand in single quotes...
+            PDIR=$(grep -v '^\s*$' "${PROJECTFILE}" \
+                    | fzf --query="$*" --exact --select-1 --reverse --no-sort \
+                          --bind='ctrl-e:execute(${VISUAL} ${PROJECTFILE})+reload(grep -v "^\\s*$" "${PROJECTFILE}")' \
+                          --bind='right:clear-query+reload(echo "{r}" ; fd --hidden --max-depth 1 --type=d --absolute-path --full-path . {})' \
+                          --bind='left:reload(echo $(dirname {}) ; fd --hidden --max-depth 1 --type=d --absolute-path --full-path . $(dirname {}))' \
+                          --preview='ls -lA {}')
             [[ -z "$PDIR" ]] && return 1
             shift
             [[ ! -d "${PDIR}" ]] && { echo "Directory ${PDIR} not found." ; return 1 ;}
@@ -228,9 +234,9 @@ EOF-PRIVATE-CONF
         git remote -v
         echo -e "\n----------  git show --no-patch  ----------------\n"
         git show --no-patch
-        echo -e "\n----------  git fetch -v ; git status  ----------\n"
+        echo -e "\n----------  git fetch -v  -----------------------\n"
         git fetch -v
-        echo ""
+        echo -e "\n----------  git status  -------------------------\n"
         git status
         echo -e "\n===============================================================================\n"
     fi
