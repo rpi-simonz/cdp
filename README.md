@@ -19,6 +19,7 @@ If not set externally they are set in the script to the following defaults:
     PROJECTDIR=~/projects
     PROJECTFILE=~/.projects
 
+
 ## Autostart per project
 
 If there is a file `.cdprc` in the target directory, that one is sourced.  
@@ -65,7 +66,6 @@ The following options are for administrative purposes:
     -h        this help text
 
     --init    create example .cdprc and .private-conf.sh in the current directory
-
 
 
 ## Installation
