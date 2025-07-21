@@ -42,9 +42,9 @@ are done, e.g. the .cdprc is searched for and optionally sourced.
 
 Within the main screen (called without options) there are additional features:
 
-  - Ctrl-E to open the project file for editing and reload it afterwards
-  - Ctrl-R to reload the projectfile
-  - <left>/<right> to navigate the directory tree
+  - `Ctrl-E` to open the project file for editing and reload it afterwards
+  - `Ctrl-R` to reload the projectfile
+  - `left`/`right` to navigate the directory tree
 
 
 Options:
