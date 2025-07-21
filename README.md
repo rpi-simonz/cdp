@@ -40,6 +40,12 @@ If the given filter string is "." (just a dot) no directory selection is
 performed at all, the current directory is kept and any followup actions
 are done, e.g. the .cdprc is searched for and optionally sourced.
 
+Within the main screen (called without options) there are additional features:
+
+  - Ctrl-E to open the project file for editing and reload it afterwards
+  - Ctrl-R to reload the projectfile
+  - <left>/<right> to navigate the directory tree
+
 
 Options:
 
@@ -57,6 +63,7 @@ The following options are for administrative purposes:
     -h        this help text
 
     --init    create example .cdprc and .private-conf.sh in the current directory
+
 
 
 ## Installation
@@ -99,13 +106,8 @@ edit_by_status() {
     # and calling an editor with them
 }
 
-
 alias vibs='edit_by_status'
 alias vids='vimdiff -c "syntax off" {de,en}/src/SUMMARY.md'
-
-# Show infos about defined aliases
-alias vibs
-alias vids
 ```
 
 For a real world example see project [raspiBackupDoc here at GitHub](https://github.com/framps/raspiBackupDoc).
