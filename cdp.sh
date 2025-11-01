@@ -134,7 +134,7 @@ EOF
             shift ;;
 
          ~) # just cd into $PROJECTDIR
-            cd "${PROJECTDIR}/$PDIR" || return 1
+            cd "${PROJECTDIR}" || return 1
             return 0
             ;;
 
