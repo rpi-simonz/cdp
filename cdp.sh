@@ -133,6 +133,11 @@ EOF
             # and proceed to the next step checking for .cdprc etc.
             shift ;;
 
+         ~) # just cd into $PROJECTDIR
+            cd "${PROJECTDIR}/$PDIR" || return 1
+            return 0
+            ;;
+
          --init) if [[ -f .cdprc ]] ; then
                      echo "File .cdprc is already existing!"
                  else
